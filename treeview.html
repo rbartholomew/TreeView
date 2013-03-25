@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="underscore.js"></script>
+        <script src="backbone.js"></script>
+        <link href="treeview.css" rel="stylesheet" />
+    </head>
+    <body>
+        
+        <div id="treeView">
+            
+        </div>
+        
+        <script type="text/javascript">
+        
+        $(function() {
+           
+           Folder = Backbone.Model.extend({
+                name: null,
+                items: null,
+                children: null,
+                level: null,
+                state: "unselected"
+           });
+           
+           Folders = Backbone.Collection.extend({
+                initialize: function(models, options){
+
+                } 
+           });
+           
+           
+           var child1 = new Folder({name: "Child 1", items: ["Child 1-1", "Child 1-2"], state:"unselected" });
+           var child2 = new Folder({name: "Child 2", items: ["Child 2-1", "Child 2-2"], state:"unselected"  });
+           var root = new Folder({name: "Parent", items: ["Parent 1", "Parent 2", "Parent 3"], state:"unselected" , children: [child1, child2], level:0});
+        
+           
+           FolderView = Backbone.View.extend({
+                el: "<div class='folder'><input type='checkbox'/><span class='folderName'></span></div>",
+                events: {
+                    "click input[type='checkbox']": "selectAll",
+                    "click .folderName": "selectSingle"
+                },
+                initialize: function() {
+                    this.render();
+                    if(this.model.get("children")){
+                        for(var i in this.model.get("children")){
+                            this.addChild(this.model.get("children")[i], this.model.get("level") + 1);
+                        }
+                    }
+                },
+                render: function(){
+                    this.$el.find(".folderName").html(this.model.get("name"));
+                    
+                },
+                addChild: function(child, level){
+                    child.set("level", level);
+                    child.set("state", "unselected");
+                    var view = new FolderView({model: child});
+                    var lc = "level" + level;
+                    view.$el.addClass(lc);
+                    this.$el.append(view.el);
+                },
+                selectAll: function() {
+                    if(this.model.get("state") == "unselected"){
+                        //select all checkboxes
+                    }
+                    else {
+                        //unselect all checkboxes
+                    }
+                },
+                selectSingle: function() {
+                    if(this.model.get("state") == "unselected"){
+                        $(this.$el.find(".folderName")[0]).addClass("selected");
+                        this.model.set("state", "selected");
+                    }
+                    else {
+                        $(this.$el.find(".folderName")[0]).removeClass("selected");
+                        this.model.set("state", "unselected");
+                    }
+                }
+           });
+           
+            window.AppView = Backbone.View.extend({
+                el: $("#treeView"),
+                initialize: function(){
+                    var view = new FolderView({model:root});
+                    this.$el.append(view.el);                    
+                }
+            });
+            
+            var appView = new AppView;
+        });
+        
+        </script>
+    </body>
+</html>

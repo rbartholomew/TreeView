@@ -1,0 +1,21 @@
+.folder {
+    margin-top : 20px;
+}
+
+.folderName {
+    padding : 10px;
+    border-radius : 5px;
+}
+
+.level1 {
+    margin-left: 30px;
+}
+
+.level2 {
+    margin-left: 30px;
+}
+
+.folderName.selected {
+    background-color : #55F;
+    color: white;
+}
